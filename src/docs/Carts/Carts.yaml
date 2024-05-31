@@ -1,0 +1,113 @@
+paths:
+  /api/carts:
+    get:
+      summary: "Obtener todos los carritos"
+      tags:
+        - Carts
+      description: "Devuelve una lista de todos los carritos."
+      responses:
+        200:
+          description: "Operación exitosa. Devuelve la lista de carritos."
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Cart"
+        500:
+          description: "Error interno del servidor intentando obtener los carritos."
+    post:
+      summary: "Crear un nuevo carrito"
+      tags:
+        - Carts
+      description: "Crea un nuevo carrito en la base de datos."
+      responses:
+        201:
+          description: "Operación exitosa. Carrito creado correctamente."
+        400:
+          description: "Error de validación. Datos incorrectos en la solicitud."
+        500:
+          description: "Error interno del servidor intentando crear un carrito."
+
+  /api/carts/{id}:
+    get:
+      summary: "Obtener un carrito por ID"
+      tags:
+        - Carts
+      description: "Devuelve un carrito específico según su ID."
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID del carrito a buscar."
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "Operación exitosa. Devuelve el carrito solicitado."
+          schema:
+            $ref: "#/definitions/Cart"
+        404:
+          description: "Carrito no encontrado. El ID proporcionado no coincide con ningún carrito."
+        500:
+          description: "Error interno del servidor intentando obtener un carrito."
+
+    put:
+      summary: "Actualizar un carrito por ID"
+      tags:
+        - Carts
+      description: "Actualiza un carrito existente en la base de datos según su ID."
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID del carrito a actualizar."
+          required: true
+          type: "string"
+        - name: "cart"
+          in: "body"
+          description: "Datos actualizados del carrito."
+          required: true
+          schema:
+            $ref: "#/definitions/Cart"
+      responses:
+        200:
+          description: "Operación exitosa. Carrito actualizado correctamente."
+        404:
+          description: "Carrito no encontrado. El ID proporcionado no coincide con ningún carrito."
+        500:
+          description: "Error interno del servidor intentando actualizar un carrito."
+
+    delete:
+      summary: "Eliminar un carrito por ID"
+      tags:
+        - Carts
+      description: "Elimina un carrito existente en la base de datos según su ID."
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID del carrito a eliminar."
+          required: true
+          type: "string"
+      responses:
+        204:
+          description: "Operación exitosa. Carrito eliminado correctamente."
+        404:
+          description: "Carrito no encontrado. El ID proporcionado no coincide con ningún carrito."
+        500:
+          description: "Error interno del servidor intentando borrar un carrito."
+
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: ID único del carrito.
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              product:
+                $ref: "#/components/schemas/Product"
+              quantity:
+                type: integer
+          description: Lista de productos en el carrito con sus cantidades.

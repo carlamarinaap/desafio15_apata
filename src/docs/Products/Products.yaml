@@ -1,0 +1,139 @@
+paths:
+  /api/products:
+    get:
+      summary: "Obtener todos los productos"
+      tags:
+        - Products
+      description: "Devuelve una lista de todos los productos disponibles."
+      responses:
+        200:
+          description: "Operación exitosa. Devuelve la lista de productos."
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Product"
+        500:
+          description: "Error interno del servidor intentando obtener los productos."
+    post:
+      summary: "Crear un nuevo producto"
+      tags:
+        - Products
+      description: "Crea un nuevo producto en la base de datos."
+      parameters:
+        - name: "product"
+          in: "body"
+          description: "Datos del nuevo producto a crear."
+          required: true
+          schema:
+            $ref: "#/definitions/Product"
+      responses:
+        201:
+          description: "Operación exitosa. Producto creado correctamente."
+        400:
+          description: "Error de validación. Datos incorrectos en la solicitud."
+        500:
+          description: "Error interno del servidor intentando agregar un nuevo producto."
+
+  /api/products/{id}:
+    get:
+      summary: "Obtener un producto por ID"
+      tags:
+        - Products
+      description: "Devuelve un producto específico según su ID."
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID del producto a buscar."
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "Operación exitosa. Devuelve el producto solicitado."
+          schema:
+            $ref: "#/definitions/Product"
+        404:
+          description: "Producto no encontrado. El ID proporcionado no coincide con ningún producto."
+        500:
+          description: "Error interno del servidor intentando obtener un producto."
+
+    put:
+      summary: "Actualizar un producto por ID"
+      tags:
+        - Products
+      description: "Actualiza un producto existente en la base de datos según su ID."
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID del producto a actualizar."
+          required: true
+          type: "string"
+        - name: "product"
+          in: "body"
+          description: "Datos actualizados del producto."
+          required: true
+          schema:
+            $ref: "#/definitions/Product"
+      responses:
+        200:
+          description: "Operación exitosa. Producto actualizado correctamente."
+        404:
+          description: "Producto no encontrado. El ID proporcionado no coincide con ningún producto."
+        500:
+          description: "Error interno del servidor intentando actualizar un producto."
+
+    delete:
+      summary: "Eliminar un producto por ID"
+      tags:
+        - Products
+      description: "Elimina un producto existente en la base de datos según su ID."
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID del producto a eliminar."
+          required: true
+          type: "string"
+      responses:
+        204:
+          description: "Operación exitosa. Producto eliminado correctamente."
+        404:
+          description: "Producto no encontrado. El ID proporcionado no coincide con ningún producto."
+        500:
+          description: "Error interno del servidor intentando eliminar un producto."
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: ID único del producto.
+        title:
+          type: string
+          description: Título del producto.
+        description:
+          type: string
+          description: Descripción del producto.
+        price:
+          type: number
+          format: float
+          description: Precio del producto.
+        thumbnails:
+          type: array
+          items:
+          description: Lista de URLs de las miniaturas del producto.
+        code:
+          type: string
+          description: Código único del producto.
+        stock:
+          type: integer
+          description: Cantidad de stock disponible del producto.
+        category:
+          type: string
+          description: Categoría del producto.
+        status:
+          type: boolean
+          description: Estado del producto (activo/inactivo).
+        owner:
+          type: string
+          description: Propietario del producto.

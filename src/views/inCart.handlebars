@@ -1,0 +1,25 @@
+<h1 class="text-center m-3">Productos del Carrito</h1>
+<div class="m-5" id="productList">
+  <ul class="list-group m-1">
+    {{#each cartJSON.products}}
+      <li class="list-group-item bg-light">
+        <div class="d-flex justify-content-between">
+          <div class="d-flex">
+            <h5 class="mx-2">{{this.quantity}} x {{this.product.title}}</h5>
+            <p>Precio por unidad: ${{this.product.price}}</p>
+          </div>
+          <p class="card-text">$ {{this.total}}</p>
+        </div>
+      </li>
+    {{/each}}
+  </ul>
+  <div class="text-end m-3">
+    <p>TOTAL: {{amount}}</p>
+  </div>
+
+</div>
+<div class="text-center mb-5">
+  <a href="/api/carts/{{this.cartId}}/purchase" class="btn btn-success btn-sm">Finalizar
+    Compra</a>
+  <a class="btn btn-secondary btn-sm" href="/profile">Volver</a>
+</div>

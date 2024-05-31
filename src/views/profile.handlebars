@@ -1,0 +1,22 @@
+<div class="containter m-3 text-center mx-0">
+  <h1>Mi perfil</h1>
+  <div class="card mx-auto" style="width: 25rem;">
+    <div class="card-body">
+      <h5 class="card-title mb-5">Datos Personales</h5>
+      <p class="card-text text-start">Nombre Completo:
+        {{this.user.first_name}}
+        {{this.user.last_name}}</p>
+      <p class="card-text text-start">Edad: {{this.user.age}}</p>
+      <p class="card-text text-start">Correo: {{this.user.email}}</p>
+      <p class="card-text text-start">Rol:
+        {{#if this.isAdmin}} Administrador {{else}} Usuario {{/if}}</p>
+      {{#if this.isAdmin}}{{else}}
+        <a href="/carts/{{this.user.cart}}" class="btn btn-primary">Ver mi carrito</a>
+      {{/if}}
+    </div>
+  </div>
+  <div class="m-3">
+    <a class="btn btn-secondary btn-sm" href="/products">Volver</a>
+    <a class="btn btn-outline-danger btn-sm" href="/api/sessions/logout">Cerrar Sesión</a>
+  </div>
+</div>

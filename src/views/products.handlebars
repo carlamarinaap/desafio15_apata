@@ -1,0 +1,82 @@
+<div class="containter m-3">
+  <form action="/api/sessions/logout" class="d-flex align-items-center justify-content-between">
+  <h6>Te damos la bienvenida {{#if isAdmin}} administrador {{else}} usuario {{/if}} {{user.first_name}} {{user.last_name}}!</h6>
+  <div>
+  <a href="/profile" class="btn btn-success btn-sm" >Mi perfil</a>
+  <button class="btn btn-outline-danger btn-sm" type="submit">Cerrar Sesión</button>
+  </div>
+  </form>
+</div>
+
+<h1 class="text-center m-3">Productos</h1>
+    <div class="text-danger text-center m-2">{{this.msg}}</div>
+{{#if isValid}}
+<div class="text-center">
+  <a class="btn btn-sm btn-outline-primary" href='http://localhost:{{port}}/products?sort=asc'>Ordenar menor precio</a>
+  <a class="btn btn-sm btn-outline-primary" href='http://localhost:{{port}}/products?sort=desc'>Ordenar mayor precio</a>
+</div>
+{{#if isAdmin}}
+<div class="d-flex flex-wrap m-5 justify-content-center" id="productList">
+  {{#each products.payload}}
+  <form action="/api/carts/{{../user.cart}}/products/{{this._id}}" method="POST">
+    <div class="card m-1 bg-light" style="width: 18rem;">
+      <div class="card-body">
+        <h5 class="card-title">{{this.title}}</h5>
+        <p class="card-text">{{this.description}}</p>
+        <p class="card-text">$ {{this.price}}</p>
+      </div>
+    </div>
+    </form>
+  {{/each}}
+  {{else}}
+  <div class="d-flex flex-wrap m-5 justify-content-center" id="productList">
+  {{#each products.payload}}
+  <form action="/api/carts/{{../user.cart}}/products/{{this._id}}" method="POST">
+    <div class="card m-1 bg-light" style="width: 18rem;">
+      <div class="card-body">
+        <h5 class="card-title">{{this.title}}</h5>
+        <p class="card-text">{{this.description}}</p>
+        <p class="card-text">$ {{this.price}}</p>
+      </div>
+      {{#if this.stock}}
+        <div class=" m-2">
+          <button class="btn btn-primary" type="submit" id="addProductInCart">Agregar al carrito </button>
+        </div>
+      {{else}}        
+        <div class=" m-2">
+          <p class="text-danger">Sin stock </p>
+        </div>  
+      {{/if}}
+    </div>
+    </form>
+  {{/each}}
+  {{/if}}
+
+</div>
+{{#if limit}}
+{{else}}
+<div class="container d-flex justify-content-center">
+  <div>
+      {{#if products.hasPrevPage}}
+    <a class="nav-link text-primary" href={{products.prevLink}}><< Anterior</a>
+  {{else}}
+    <p class="text-body-tertiary"><< Anterior</a>
+  {{/if}}
+  </div>
+<div class="mx-4">
+  {{products.page}}
+</div>
+<div>
+    {{#if products.hasNextPage}}
+    <a class="nav-link text-primary" href={{products.nextLink}}>Siguiente >></a>
+    {{else}}
+    <p class="text-body-tertiary">Siguiente >></a>
+  {{/if}}
+</div>
+</div>
+{{/if}}
+{{else}}
+<p class="text-center">No hay productos para mostrar en página {{page}}</p>
+{{/if}}
+
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
