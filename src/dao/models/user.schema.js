@@ -27,7 +27,7 @@ const UserSchema = new mongoose.Schema({
     ref: "Cart",
   },
   documents: {
-    trpe: Array, //estructura: {name:string, reference: string(link al doc)}
+    type: Array, //estructura: {name:string, reference: string(link al doc)}
   },
   last_connection: {
     type: String,

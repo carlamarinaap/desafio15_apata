@@ -16,6 +16,7 @@ import {
 } from "../controllers/views.controller.js";
 import { mail, mockingProducts } from "../controllers/products.controller.js";
 import { isLoggedIn, verifyRole } from "../middlewares.js";
+import { cleanCartById } from "../controllers/carts.controller.js";
 
 const router = express.Router();
 
@@ -36,5 +37,6 @@ router.get("/chat", chat);
 router.get("/carts/:cid", getUserCart);
 router.get("/profile", profileView);
 router.get("/products", productsView);
+router.get("/cleanCart/:cid", cleanCartById);
 
 export default router;

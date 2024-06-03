@@ -71,7 +71,6 @@ export async function getUserCart(req, res) {
 }
 
 export async function productsView(req, res) {
-  console.log("Entra al products View");
   try {
     let user;
     let isAdmin = false;

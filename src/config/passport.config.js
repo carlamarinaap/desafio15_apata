@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
 import config from "./config.js";
 import { port } from "../commander.js";
 import { userService } from "../repositories/index.js";
-
+import UserSchema from "../dao/models/user.schema.js";
 const cm = new cartManager();
 
 passport.use(
@@ -78,7 +78,13 @@ passport.use(
         if (!user)
           return done(null, false, { message: "Contraseña o usuario incorrecto" });
         const token = generateToken(user);
-        return done(null, { user, token });
+        await UserSchema.findOneAndUpdate(
+          { _id: user._id },
+          { $set: { last_connection: `${new Date()}` } },
+          { new: true }
+        );
+        const userUpdated = await userService.getByEmail(username);
+        return done(null, { userUpdated, token });
       } catch (error) {
         return done(error);
       }
@@ -107,6 +113,7 @@ const initializePassport = () => {
           age,
           email: username,
           password,
+          last_connection: `${new Date()}`,
           cart: newCart._id,
         };
         await userService.add(user);
@@ -133,6 +140,7 @@ const initializePassport = () => {
             let newUser = {
               first_name: profile._json.name,
               email: profile._json.email,
+              last_connection: `${new Date()}`,
               cart: newCart[0]._id,
             };
             let result = await userService.add(newUser);
@@ -140,7 +148,13 @@ const initializePassport = () => {
             done(null, { user: result, token });
           } else {
             const token = generateToken(user);
-            done(null, { user, token });
+            await UserSchema.findOneAndUpdate(
+              { _id: user._id },
+              { $set: { last_connection: `${new Date()}` } },
+              { new: true }
+            );
+            const userUpdated = await userService.getById(user._id);
+            done(null, { user: userUpdated, token });
           }
         } catch (error) {
           return done(error);

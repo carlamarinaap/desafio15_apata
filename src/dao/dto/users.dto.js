@@ -6,6 +6,8 @@ export default class UsersDTO {
       (this.age = user.age ? user.age : 0),
       (this.password = user.password ? user.password : ""),
       (this.role = user.role ? user.role : "user"),
-      (this.cart = user.cart);
+      (this.cart = user.cart),
+      (this.documents = user.documents ? user.documents : []);
+    this.last_connection = user.last_connection ? user.last_connection : "";
   }
 }

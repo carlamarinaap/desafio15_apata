@@ -1,8 +1,10 @@
 import jwt from "jsonwebtoken";
 import config from "./config/config.js";
 import { userService } from "./repositories/index.js";
+import multer from "multer";
+import path from "path";
 
-export async function verifyRole(req, res, next) {
+async function verifyRole(req, res, next) {
   try {
     const userId = jwt.verify(req.signedCookies.jwt, config.privateKey).id;
     if (userId === 1) {
@@ -24,7 +26,7 @@ export async function verifyRole(req, res, next) {
   }
 }
 
-export async function isLoggedIn(req, res, next) {
+async function isLoggedIn(req, res, next) {
   try {
     const userId = jwt.verify(req.signedCookies.jwt, config.privateKey).id;
     req.logger.INFO("Usuario logueado: " + userId);
@@ -35,3 +37,27 @@ export async function isLoggedIn(req, res, next) {
     res.render("login", { msg });
   }
 }
+const storageConfig = (folder) =>
+  multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, path.join(__dirname, folder)); // Carpeta donde se guardarán los archivos
+    },
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + path.extname(file.originalname)); // Nombre del archivo
+    },
+  });
+
+// Middlewares de multer para diferentes tipos de archivos
+const uploadProfileImg = multer({ storage: storageConfig("profiles") }).single(
+  "profileImg"
+);
+const uploadProductImg = multer({ storage: storageConfig("products") }).array(
+  "productImg",
+  5
+); // hasta 5 imágenes de producto
+const uploadDocImg = multer({ storage: storageConfig("documents") }).array(
+  "documents",
+  3
+);
+
+export { verifyRole, isLoggedIn, uploadProfileImg, uploadProductImg, uploadDocImg };

@@ -18,7 +18,7 @@ export async function register(req, res, next) {
         httpOnly: true,
         maxAge: 1000 * 60 * 60,
       });
-      res.render("products");
+      res.redirect("/products");
     } catch (error) {
       req.logger.ERROR(error.message);
       next(error);
@@ -43,7 +43,7 @@ export async function login(req, res, next) {
           httpOnly: true,
           maxAge: 1000 * 60 * 60,
         })
-        .render("products");
+        .redirect("/products");
     } catch (error) {
       req.logger.ERROR(error.message);
       next(error);
@@ -145,4 +145,23 @@ export async function changeRole(req, res) {
 
 export async function githubLogin(req, res) {
   console.log("Pasa por user.controller");
+}
+
+export async function showDocuments(req, res) {
+  try {
+    const userId = req.params.uid;
+    const user = await userService.getById(userId);
+
+    if (!user) {
+      return res.status(404).send("Usuario no encontrado");
+    }
+
+    // Actualiza el estado del usuario para indicar que ha subido un documento
+    user.hasUploadedDocuments = true;
+    await userService.update(userId, user);
+
+    res.status(200).send("Documentos subidos correctamente");
+  } catch (error) {
+    res.status(500).send("Error al subir los documentos");
+  }
 }

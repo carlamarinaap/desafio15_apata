@@ -26,8 +26,9 @@ import MessageManager from "./dao/manager_mongo/messageManager.js";
 //Routes
 import routerProducts from "./routes/products.router.js";
 import routerCarts from "./routes/carts.router.js";
-import routerSession from "./routes/user.router.js";
+import routerSession from "./routes/session.router.js";
 import routerViews from "./routes/views.router.js";
+import routerUser from "./routes/user.router.js";
 
 import { __dirname } from "./utils.js";
 import initializePassport from "./config/passport.config.js";
@@ -76,6 +77,7 @@ app.use(express.static(__dirname + "/public"));
 app.use("/api/products", routerProducts);
 app.use("/api/carts", routerCarts);
 app.use("/api/sessions", routerSession);
+app.use("/api/users", routerUser);
 app.use("/", routerViews);
 
 app.engine(
@@ -93,7 +95,6 @@ app.get("/ping", (req, res) => res.status(200).send("Pong!"));
 
 const pm = new ProductManager();
 const mm = new MessageManager();
-
 socketServer.on("connection", (socket) => {
   console.log("Nuevo cliente conectado");
 
