@@ -3,6 +3,12 @@
   <div class="card mx-auto" style="width: 25rem;">
     <div class="card-body">
       <h5 class="card-title mb-5">Datos Personales</h5>
+      {{#if this.isAdmin}}{{else}}
+        <div class="text-center m-2">
+          <img class="w-25" src="{{profileImg}}" alt="foto-perfil" />
+        </div>
+        <a class="btn btn-warning btn-sm m-2" href="/profile/photo">Cambiar foto de perfil</a>
+      {{/if}}
       <p class="card-text text-start">Nombre Completo:
         {{this.user.first_name}}
         {{this.user.last_name}}</p>
@@ -11,6 +17,7 @@
       <p class="card-text text-start">Rol:
         {{#if this.isAdmin}} Administrador {{else}} Usuario {{/if}}</p>
       {{#if this.isAdmin}}{{else}}
+        <a href="/profile/documentation" class="btn btn-outline-dark">Cargar Documentación</a>
         <a href="/carts/{{this.user.cart}}" class="btn btn-primary">Ver mi carrito</a>
       {{/if}}
     </div>

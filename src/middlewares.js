@@ -3,6 +3,7 @@ import config from "./config/config.js";
 import { userService } from "./repositories/index.js";
 import multer from "multer";
 import path from "path";
+import { __dirname } from "./utils.js";
 
 async function verifyRole(req, res, next) {
   try {
@@ -40,24 +41,49 @@ async function isLoggedIn(req, res, next) {
 const storageConfig = (folder) =>
   multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, path.join(__dirname, folder)); // Carpeta donde se guardarán los archivos
+      cb(null, path.join(`${__dirname}/public`, folder)); // Carpeta donde se guardarán los archivos
     },
     filename: (req, file, cb) => {
-      cb(null, Date.now() + path.extname(file.originalname)); // Nombre del archivo
+      const userId = jwt.verify(req.signedCookies.jwt, config.privateKey).id;
+      cb(null, `${userId}${path.extname(file.originalname)}`); // Nombre del archivo
     },
   });
 
 // Middlewares de multer para diferentes tipos de archivos
-const uploadProfileImg = multer({ storage: storageConfig("profiles") }).single(
-  "profileImg"
-);
+// const uploadProfileImg = multer({ storage: storageConfig("profiles") }).single(
+//   "profileImg"
+// );
+
+const uploadProfileImg = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, path.join(`${__dirname}/public`, "profiles")); // Carpeta donde se guardarán los archivos
+    },
+    filename: (req, file, cb) => {
+      const userId = jwt.verify(req.signedCookies.jwt, config.privateKey).id;
+      cb(null, `${userId}${path.extname(file.originalname)}`); // Nombre del archivo
+    },
+  }),
+}).single("profileImg");
+
 const uploadProductImg = multer({ storage: storageConfig("products") }).array(
   "productImg",
   5
-); // hasta 5 imágenes de producto
-const uploadDocImg = multer({ storage: storageConfig("documents") }).array(
-  "documents",
-  3
 );
+const uploadDocImg = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, path.join(`${__dirname}/public`, "documents")); // Carpeta donde se guardarán los archivos
+    },
+    filename: (req, file, cb) => {
+      const userId = jwt.verify(req.signedCookies.jwt, config.privateKey).id;
+      cb(null, `${file.fieldname}-${userId}${path.extname(file.originalname)}`); // Nombre del archivo
+    },
+  }),
+}).fields([
+  { name: "identificacion", maxCount: 1 },
+  { name: "domicilio", maxCount: 1 },
+  { name: "estadoCuenta", maxCount: 1 },
+]);
 
 export { verifyRole, isLoggedIn, uploadProfileImg, uploadProductImg, uploadDocImg };

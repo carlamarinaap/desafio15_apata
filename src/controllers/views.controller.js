@@ -111,7 +111,7 @@ export async function loginView(req, res) {
 }
 
 export async function profileView(req, res) {
-  let user, isAdmin;
+  let user, isAdmin, profileImg;
   const userId = jwt.verify(req.signedCookies.jwt, config.privateKey).id;
   if (userId === 1) {
     user = config.userAdmin;
@@ -119,8 +119,21 @@ export async function profileView(req, res) {
   } else {
     user = await userSchema.findById(userId);
     isAdmin = false;
+    profileImg = user.documents.find((file) => {
+      return file.name === "ProfileImg";
+    });
   }
-  res.render("profile", { user, isAdmin });
+  res.render("profile", { user, isAdmin, profileImg: profileImg.reference });
+}
+
+export async function profilePhotoView(req, res) {
+  const userId = jwt.verify(req.signedCookies.jwt, config.privateKey).id;
+  res.render("profilePhoto", { userId });
+}
+
+export async function profileDocumentationView(req, res) {
+  const userId = jwt.verify(req.signedCookies.jwt, config.privateKey).id;
+  res.render("documentation", { userId });
 }
 
 export async function passwordRestoreView(req, res) {

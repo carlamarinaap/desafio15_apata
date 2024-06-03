@@ -7,6 +7,8 @@ import {
   loginView,
   passwordRestoreView,
   productsView,
+  profileDocumentationView,
+  profilePhotoView,
   profileView,
   realTimeProducts,
   registerView,
@@ -36,6 +38,8 @@ router.get("/realTimeProducts", verifyRole, realTimeProducts);
 router.get("/chat", chat);
 router.get("/carts/:cid", getUserCart);
 router.get("/profile", profileView);
+router.get("/profile/photo", profilePhotoView);
+router.get("/profile/documentation", profileDocumentationView);
 router.get("/products", productsView);
 router.get("/cleanCart/:cid", cleanCartById);
 

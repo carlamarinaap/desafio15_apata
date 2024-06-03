@@ -1,0 +1,19 @@
+<div class="containter m-3 text-center mx-0">
+  <h1>Mi perfil</h1>
+  <div class="card mx-auto" style="width: 25rem;">
+    <div class="card-body">
+      <h5 class="card-title mb-3">Elegí tu foto de perfil</h5>
+      <form
+        id="profile_photo_form"
+        action="/api/users/{{this.userId}}/profileImg"
+        method="POST"
+        enctype="multipart/form-data"
+      >
+        <div class="mb-3 mx-5 d-flex">
+          <input class="form-control" type="file" name="profileImg" id="fileInput" />
+        </div>
+        <button type="submit" class="btn btn-success">Guardar</button>
+      </form>
+    </div>
+  </div>
+</div>

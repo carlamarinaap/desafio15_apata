@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken";
 import config from "../config/config.js";
 import { userService } from "../repositories/index.js";
 import { verifyEmailToken } from "../config/passport.config.js";
+import userSchema from "../dao/models/user.schema.js";
+import path from "path";
 
 export async function register(req, res, next) {
   passport.authenticate("register", async (err, user) => {
@@ -133,8 +135,16 @@ export async function changeRole(req, res) {
       res.status(200).send("Rol del usuario cambiado a user con éxito");
     }
     if (user && user.role === "user") {
-      // if (user.statusDocuments) { ... esto sería si ya cargó identificacion, comprobante de domicilio y comprobante de estado de cuenta
-      await userService.updateRole(user.email);
+      const filtro = user.documents.filter((file) => {
+        return (
+          file.name === "identificacion" ||
+          file.name === "domicilio" ||
+          file.name === "estadoCuenta"
+        );
+      });
+      if (filtro.length === 3) {
+        await userService.updateRole(user.email);
+      }
       res.status(200).send("Rol del usuario cambiado a premium con éxito");
     }
     // else {devolver un error  indicando que el usuario  no ha terminado de procesar su documentacion}
@@ -147,21 +157,90 @@ export async function githubLogin(req, res) {
   console.log("Pasa por user.controller");
 }
 
-export async function showDocuments(req, res) {
+export async function chargeProfileImg(req, res) {
   try {
     const userId = req.params.uid;
+    const docPath = req.file.path;
     const user = await userService.getById(userId);
+    if (!user) {
+      return res.status(404).send("Usuario no encontrado");
+    }
+    const filtro = user.documents.find((file) => {
+      return file.name === "ProfileImg";
+    });
 
+    if (!filtro) {
+      user.documents.push({
+        name: "ProfileImg",
+        reference: `profiles/${path.basename(docPath)}`,
+      });
+    } else {
+      filtro.reference = `profiles/${path.basename(docPath)}`;
+    }
+    await userSchema.findByIdAndUpdate(userId, user);
+
+    res.status(200).send("Documentos subidos correctamente");
+  } catch (error) {
+    res.status(500).send("Error al subir los documentos" + error.message);
+  }
+}
+
+export async function chargeDocumentation(req, res) {
+  try {
+    const userId = req.params.uid;
+    const docPath = req.files;
+    const user = await userService.getById(userId);
     if (!user) {
       return res.status(404).send("Usuario no encontrado");
     }
 
-    // Actualiza el estado del usuario para indicar que ha subido un documento
-    user.hasUploadedDocuments = true;
-    await userService.update(userId, user);
+    if (docPath.identificacion) {
+      const filtroIdentificacion = user.documents.find((file) => {
+        return file.name === "identificacion";
+      });
+
+      if (!filtroIdentificacion) {
+        user.documents.push({
+          name: "identificacion",
+          reference: `documents/${docPath.identificacion[0].filename}`,
+        });
+      } else {
+        filtro.reference = `documents/${docPath.identificacion[0].filename}`;
+      }
+    }
+    if (docPath.domicilio) {
+      const filtroDomicilio = user.documents.find((file) => {
+        return file.name === "domicilio";
+      });
+
+      if (!filtroDomicilio) {
+        user.documents.push({
+          name: "domicilio",
+          reference: `documents/${docPath.domicilio[0].filename}`,
+        });
+      } else {
+        filtro.reference = `documents/${docPath.domicilio[0].filename}`;
+      }
+    }
+    if (docPath.estadoCuenta) {
+      const filtroEstadoCta = user.documents.find((file) => {
+        return file.name === "estadoCuenta";
+      });
+
+      if (!filtroEstadoCta) {
+        user.documents.push({
+          name: "estadoCuenta",
+          reference: `documents/${docPath.estadoCuenta[0].filename}`,
+        });
+      } else {
+        filtro.reference = `documents/${docPath.estadoCuenta[0].filename}`;
+      }
+    }
+
+    await userSchema.findByIdAndUpdate(userId, user);
 
     res.status(200).send("Documentos subidos correctamente");
   } catch (error) {
-    res.status(500).send("Error al subir los documentos");
+    res.status(500).send("Error al subir los documentos" + error.message);
   }
 }
