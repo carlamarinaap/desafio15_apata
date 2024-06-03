@@ -144,10 +144,11 @@ export async function changeRole(req, res) {
       });
       if (filtro.length === 3) {
         await userService.updateRole(user.email);
+        res.status(200).send("Rol del usuario cambiado a premium con éxito");
+      } else {
+        res.status(500).send("El usuario no ha terminado de procesar su documentacion");
       }
-      res.status(200).send("Rol del usuario cambiado a premium con éxito");
     }
-    // else {devolver un error  indicando que el usuario  no ha terminado de procesar su documentacion}
   } catch (error) {
     res.status(500).send(error.message);
   }
